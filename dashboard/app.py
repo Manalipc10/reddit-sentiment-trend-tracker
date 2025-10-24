@@ -56,7 +56,7 @@ st.markdown(
 # -----------------------------
 if st.button("🔄 Refresh Data Now"):
     st.cache_data.clear()
-    st.experimental_rerun()
+    st.rerun()
 
 
 # -----------------------------
