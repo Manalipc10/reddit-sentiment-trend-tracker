@@ -1,0 +1,20 @@
+# Python / Virtual Environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Streamlit cache
+.streamlit/secrets.toml
+.streamlit/config.toml
+
+# IDE / System files
+.vscode/
+.idea/
+.DS_Store
+
+# CSVs, logs, data files
+*.csv
+*.log
+data/
