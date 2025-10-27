@@ -19,21 +19,27 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 # -----------------------------
 # ⚙️ DATA LOADER
 # -----------------------------
-@st.cache_data(ttl=1800)  # Cache data for 30 minutes
-def load_data():
-    """Load data from Supabase and convert UTC timestamps to local time."""
+@st.cache_data(ttl=0, show_spinner=False)
+def load_data_from_supabase():
+    """Load fresh data directly from Supabase."""
     response = supabase.table("reddit_sentiment").select("*").execute()
     df = pd.DataFrame(response.data)
+
     if df.empty:
         st.warning("No data found in the Supabase table yet.")
         return df
 
-    # Convert UTC → Local time
+    # Convert UTC to local timezone
     df["created_utc"] = pd.to_datetime(df["created_utc"], utc=True)
-    local_tz = tzlocal.get_localzone()
-    df["created_local"] = df["created_utc"].dt.tz_convert(local_tz)
+    try:
+        local_tz = tzlocal.get_localzone()
+    except:
+        local_tz = pytz.timezone("America/New_York")
 
+    df["created_local"] = df["created_utc"].dt.tz_convert(local_tz)
     return df
+
+
 
 
 # -----------------------------
@@ -54,15 +60,20 @@ st.markdown(
 # -----------------------------
 # 🔁 MANUAL REFRESH BUTTON
 # -----------------------------
-if st.button("🔄 Refresh Data Now"):
+st.markdown("### 🔄 Manual Refresh")
+
+if st.button("Refresh Data Now"):
     st.cache_data.clear()
+    st.session_state["data_timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    st.success("Data refreshed successfully!")
     st.rerun()
+
 
 
 # -----------------------------
 # 📥 LOAD DATA
 # -----------------------------
-df = load_data()
+df = load_data_from_supabase()
 if df.empty:
     st.stop()
 
