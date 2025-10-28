@@ -6,7 +6,7 @@ from textblob import TextBlob
 from sqlalchemy import create_engine, text
 
 
-# --- Replace this with your actual Supabase DB URI ---
+# --- Supabase DB URI ---
 DB_PATH = "postgresql://postgres:sahiladivarekar99@db.mcitrujsymkapoigslvs.supabase.co:5432/postgres"
 
 
@@ -88,9 +88,9 @@ def reddit_sentiment_flow(limit=50):
     if all_data:
         combined_df = pd.concat(all_data, ignore_index=True)
         store_to_db(combined_df)
-        print(f"✅ Processed {len(combined_df)} posts from {len(subreddits)} subreddits.")
+        print(f" Processed {len(combined_df)} posts from {len(subreddits)} subreddits.")
     else:
-        print("⚠️ No data fetched from any subreddit.")
+        print(" No data fetched from any subreddit.")
 
 
 # ------------------- MAIN -------------------
